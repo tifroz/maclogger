@@ -1,20 +1,26 @@
 winston = require 'winston'
+_				= require 'underscore'
+util		= require 'util'
+
+
+printTimestamp = ->
+	tz_la = require("timezone")(require("timezone/America/Los_Angeles"))
+	now = new Date()
+	return "#{tz_la(now, '%a %T', 'America/Los_Angeles')}.#{now.getMilliseconds()}"
 
 
 
 
 class Logger
-	debug: console.debug
-	info: console.info
-	notice: console.info
-	warning: console.warn
-	error: console.error
-	crit: console.error
-	alert: console.error
-	emerg: console.error
-	configure: (transportConfig)->
-		transports = ( (new (winston.transports[name])(params)) for name, params of transportConfig )
-		_logger = new (winston.Logger)(transports: transports)
+	constructor: (level)->
+		options = 
+			level: level or 'info'
+			colorize: true
+			handleExceptions: false
+			timestamp: printTimestamp
+
+		consoleTransport = new (winston.transports.Console)(options)
+		@logger = new winston.Logger(transports: [consoleTransport])
 
 		myCustomLevels =
 			levels:
@@ -27,24 +33,28 @@ class Logger
 				info: 1,
 				debug: 0
 
-		#_logger.setLevels(winston.config.syslog.levels)
-		_logger.setLevels(myCustomLevels.levels)
+		@logger.setLevels(myCustomLevels.levels)
 
-		wrapme = _logger.error
-		_logger.error = (err)->
-			if err.stack
-				wrapme.call _logger, err.stack
-			else
-				wrapme.call _logger, err
-
-		@debug = _logger.debug
-		@info = _logger.info
-		@notice = _logger.notice
-		@warning = _logger.warning
-		@error = _logger.error
-		@crit = _logger.crit
-		@alert = _logger.alert
-		@emerg = _logger.emerg
+		@debug = @logger.debug
+		@info = @logger.info
+		@notice = @logger.info
+		@warning = @logger.warn
+		@error = @logger.error
+		@crit = @logger.error
+		@alert = @logger.error
+		@emerg = @logger.error
+	
+	addLogFile: (config)->
+		options = 
+				json: false
+				maxsize: 10 * 1024 * 1024
+				maxFiles: 2
+				level: 'debug'
+		if config.filename	
+			_.extend  options, config
+			winston.add winston.transports.File, options
+		else
+			winston.warning util.format("WARNING Missing filename in log file config: %j", config)
 
 
 logger = new Logger()
@@ -53,4 +63,4 @@ process.on 'uncaughtException', (err)->
 	logger.error '*** uncaughtException ***'
 	logger.error err
 
-module.exports = new Logger()
+module.exports = logger

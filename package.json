@@ -4,12 +4,14 @@
   },
   "name": "maclogger",
   "description": "winston logger wrapper",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": false,
   "license" : "UNLICENSED",
   "main": "lib/main",
   "dependencies": {
-  	"winston": "0.7.x"
+  	"winston": "0.7.x",
+  	"underscore": "1.7.x",
+  	"timezone": "0.x"
   },
   "devDependencies": {}
 }
