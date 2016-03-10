@@ -39,10 +39,16 @@ class Logger
 		@info = @logger.info
 		@notice = @logger.info
 		@warning = @logger.warn
-		@error = @logger.error
 		@crit = @logger.error
 		@alert = @logger.error
 		@emerg = @logger.error
+
+		wrapme = @logger.error
+		@error = (err)=>
+			if err.stack
+				wrapme.call @logger, err.stack
+			else
+				wrapme.call @logger, err
 	
 	addLogFile: (config)->
 		options = 
