@@ -38,7 +38,7 @@ class Logger
 		@debug = @logger.debug
 		@info = @logger.info
 		@notice = @logger.info
-		@warning = @logger.warn
+		@warn = @logger.warn
 		@crit = @logger.error
 		@alert = @logger.error
 		@emerg = @logger.error
@@ -58,9 +58,9 @@ class Logger
 				level: 'debug'
 		if config.filename	
 			_.extend  options, config
-			winston.add winston.transports.File, options
+			@logger.add winston.transports.File, options
 		else
-			winston.warning util.format("WARNING Missing filename in log file config: %j", config)
+			@logger.warn util.format("WARNING Missing filename in log file config: %j", config)
 
 
 logger = new Logger()
