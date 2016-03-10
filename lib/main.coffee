@@ -52,10 +52,10 @@ class Logger
 	
 	addLogFile: (config)->
 		options = 
-				json: false
-				maxsize: 10 * 1024 * 1024
-				maxFiles: 2
-				level: 'debug'
+			json: false
+			maxsize: 10 * 1024 * 1024
+			maxFiles: 2
+			level: 'debug'
 		if config.filename	
 			_.extend  options, config
 			@logger.add winston.transports.File, options
