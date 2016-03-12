@@ -22,26 +22,16 @@ class Logger
 		consoleTransport = new (winston.transports.Console)(options)
 		@logger = new winston.Logger(transports: [consoleTransport])
 
-		myCustomLevels =
-			levels:
-				emerg: 7,
-				alert: 6,
-				crit: 5,
-				error: 4,
-				warning: 3,
-				notice: 2,
-				info: 1,
-				debug: 0
+		# note log, trace renamed to _log, _traze to avoid conflict with existing methods
+		levels = _traze: 0, _log: 1, info: 2, warn: 3, error: 4
 
-		@logger.setLevels(myCustomLevels.levels)
+		@logger.setLevels(levels)
 
-		@debug = @logger.debug
+		@trace = @logger._traze
+		@log = @logger._log
 		@info = @logger.info
-		@notice = @logger.info
 		@warn = @logger.warn
-		@crit = @logger.error
-		@alert = @logger.error
-		@emerg = @logger.error
+
 
 		wrapme = @logger.error
 		@error = (err)=>
@@ -55,7 +45,9 @@ class Logger
 			json: false
 			maxsize: 10 * 1024 * 1024
 			maxFiles: 2
-			level: 'debug'
+			level: 'log'
+		if _.isString config
+			config = filename: config
 		if config.filename	
 			_.extend  options, config
 			@logger.add winston.transports.File, options
