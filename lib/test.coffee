@@ -1,5 +1,5 @@
 logger = require "./main"
 
-logger.addLogFile filename: "/Users/hugo/Library/Logs/testLogger.log", level: "debug"
+logger.addLogFile filename: "/Users/hugo/Library/Logs/testLogger.log", level: "log"
 
-logger.debug "a test"
+logger.log "(a) test"

@@ -9,12 +9,16 @@ printTimestamp = ->
 	return "#{tz_la(now, '%a %T', 'America/Los_Angeles')}.#{now.getMilliseconds()}"
 
 
+getConvertedLevel = (l)->
+	if l is "log"
+		return "_log"
+	return l
 
 
 class Logger
 	constructor: (level)->
 		options = 
-			level: level or 'info'
+			level: getConvertedLevel(level or 'log')
 			colorize: true
 			handleExceptions: false
 			timestamp: printTimestamp
@@ -23,11 +27,12 @@ class Logger
 		@logger = new winston.Logger(transports: [consoleTransport])
 
 		# note log, trace renamed to _log, _traze to avoid conflict with existing methods
-		levels = _traze: 0, _log: 1, info: 2, warn: 3, error: 4
+		levels = _log: 0, info: 1, warn: 2, error: 3
+		colors = _log: "black", info: "green", warn: "orange", error: "red"
+		winston.addColors colors
 
 		@logger.setLevels(levels)
 
-		@trace = @logger._traze
 		@log = @logger._log
 		@info = @logger.info
 		@warn = @logger.warn
@@ -46,10 +51,10 @@ class Logger
 			maxsize: 10 * 1024 * 1024
 			maxFiles: 2
 			level: 'log'
-		if _.isString config
-			config = filename: config
 		if config.filename	
 			_.extend  options, config
+
+			options.level = getConvertedLevel(options.level)
 			@logger.add winston.transports.File, options
 		else
 			@logger.warn util.format("WARNING Missing filename in log file config: %j", config)
