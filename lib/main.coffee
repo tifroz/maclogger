@@ -62,8 +62,5 @@ class Logger
 
 logger = new Logger()
 
-process.on 'uncaughtException', (err)->
-	logger.error '*** uncaughtException ***'
-	logger.error err
 
 module.exports = logger
