@@ -9,7 +9,7 @@
   "license" : "UNLICENSED",
   "main": "lib/main",
   "dependencies": {
-  	"winston": "2.3.1",
+  	"winston": "3.2.1",
   	"underscore":"1.10.2",
   	"timezone":"1.0.23"
   },
